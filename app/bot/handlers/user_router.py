@@ -12,13 +12,13 @@ user_router = Router()
 
 @user_router.message(CommandStart())
 async def start_handler(message: Message):
-    await message.answer("<b>👋  Привет! Я бот для анализа акций.</b> \n\n"
-                         "<b>📌  Напиши тикер и период:</b>\n"
-                         "<b>Например:</b> <em>AAPL 1y</em>\n\n"
-                         "<b>Если не укажешь период - я возьму 6mo по умолчанию.</b>\n\n"
-                         "<b>🕒  Доступные периоды:</b>\n"
-                         "<em>1d,  5d,  7d,  30d,  1mo,  3mo,  6mo,  1y,  2y,  5y</em>\n\n"
-                         "<b>Попробуй  👇</b>",
+    await message.answer("<b>👋 Hi! I'm a stock analysis bot.</b> \n\n"
+                         "<b>📌 Enter the ticker and period:</b>\n"
+                         "<b>For example:</b> <em>AAPL 1y</em>\n\n"
+                         "<b>If you don't specify a period, I'll use 6mo by default.</b>\n\n"
+                         "<b>🕒 Available periods:</b>\n"
+                         "<em>1d, 5d, 7d, 30d, 1mo, 3mo, 6mo, 1y, 2y, 5y</em>\n\n"
+                         "<b>Try it 👇</b>",
                          parse_mode="HTML")
     
 @user_router.message(F.text)
@@ -26,28 +26,28 @@ async def ticker_handler(message: Message):
     try:
         ticker, period = parse_query(message.text)
     except ValueError:
-        await message.answer('Неправильный формат. Попробуй еще раз.')
+        await message.answer('Incorrect format. Try again.')
         return
     
-    status = await message.answer("<b>Принято ✅</b>\n"
-                         f"<b>Тикер:</b> {ticker}\n"  
-                         f"<b>Период:</b> {period}\n"
-                         "<b>Обрабатываю... 🕐</b>",
+    status = await message.answer("<b>Accepted ✅</b>\n"
+                         f"<b>Ticker:</b> {ticker}\n"  
+                         f"<b>Period:</b> {period}\n"
+                         "<b>Processing... 🕐</b>",
                          parse_mode="HTML")
     
     hist = await asyncio.to_thread(fetch_history, ticker, period)
     
     if hist is None:
-        await status.edit_text("❌ Не удалось получить данные.")
+        await status.edit_text("❌ Failed to retrieve data.")
         return
     
     summary = make_summary(hist)
     currency = await asyncio.to_thread(fetch_currency, ticker)
     
     await status.edit_text(
-        f"<b>{ticker.upper()}</b> за <b>{period}</b>\n\n"
-        f"Цена: <b>{summary['last']:.2f} {currency}</b>\n"
-        f"Изменение: <b>{summary['change_percent']:.2f}%</b>\n"
+        f"<b>{ticker.upper()}</b> for <b>{period}</b>\n\n"
+        f"Price: <b>{summary['last']:.2f} {currency}</b>\n"
+        f"Change: <b>{summary['change_percent']:.2f}%</b>\n"
         f"High: <b>{summary['high']:.2f} {currency}</b>\n"
         f"Low: <b>{summary['low']:.2f} {currency}</b>",
         parse_mode = "HTML"
@@ -55,5 +55,5 @@ async def ticker_handler(message: Message):
     
     chart_bytes = await asyncio.to_thread(build_price_chart, hist, ticker)
     photo = BufferedInputFile(chart_bytes, filename=f"{ticker}.png")
-    await message.answer_photo(photo, caption=f"{ticker.upper()} - График за {period}")
+    await message.answer_photo(photo, caption=f"{ticker.upper()} - Chart for the {period} period")
 
