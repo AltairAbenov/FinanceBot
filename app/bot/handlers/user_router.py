@@ -1,11 +1,12 @@
 import asyncio
 from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message
+from aiogram.types import Message, BufferedInputFile
 from app.bot.parsing import parse_query
 from app.bot.services.market_data import fetch_history
 from app.bot.services.market_data import fetch_currency
 from app.bot.services.analytics import make_summary
+from app.bot.services.charts import build_price_chart
 
 user_router = Router()
 
@@ -55,4 +56,8 @@ async def ticker_handler(message: Message):
         f"Low: <b>{summary['low']:.2f} {currency}</b>",
         parse_mode = "HTML"
     )
+    
+    chart_bytes = await asyncio.to_thread(build_price_chart, hist, ticker)
+    photo = BufferedInputFile(chart_bytes, filename=f"{ticker}.png")
+    await message.answer_photo(photo, caption=f"{ticker.upper()} - График за {period}")
 
