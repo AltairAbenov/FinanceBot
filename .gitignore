@@ -1,8 +1,15 @@
-.venv/
+# Python
 __pycache__/
-.env
 *.pyc
+*.pyo
+
+# Virtual env
+venv/
+.env
+
+# IDE
+.idea/
 .vscode/
-*.log
-*.sqlite3
-*.db
+
+# OS
+.DS_Store
