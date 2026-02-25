@@ -1,7 +1,11 @@
+import asyncio
 from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 from app.bot.parsing import parse_query
+from app.bot.services.market_data import fetch_history
+from app.bot.services.market_data import fetch_currency
+from app.bot.services.analytics import make_summary
 
 user_router = Router()
 
@@ -27,9 +31,28 @@ async def ticker_handler(message: Message):
     except ValueError:
         await message.answer('Неправильный формат. Попробуй еще раз.')
         return
-    await message.answer("<b>Принято ✅</b>\n"
+    
+    status = await message.answer("<b>Принято ✅</b>\n"
                          f"<b>Тикер:</b> {ticker}\n"  
                          f"<b>Период:</b> {period}\n"
                          "<b>Обрабатываю... 🕐</b>",
                          parse_mode="HTML")
+    
+    hist = await asyncio.to_thread(fetch_history, ticker, period)
+    
+    if hist is None:
+        await status.edit_text("❌ Не удалось получить данные.")
+        return
+    
+    summary = make_summary(hist)
+    currency = await asyncio.to_thread(fetch_currency, ticker)
+    
+    await status.edit_text(
+        f"<b>{ticker.upper()}</b> за <b>{period}</b>\n\n"
+        f"Цена: <b>{summary['last']:.2f} {currency}</b>\n"
+        f"Изменение: <b>{summary['change_percent']:.2f}%</b>\n"
+        f"High: <b>{summary['high']:.2f} {currency}</b>\n"
+        f"Low: <b>{summary['low']:.2f} {currency}</b>",
+        parse_mode = "HTML"
+    )
 

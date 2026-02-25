@@ -1,7 +1,7 @@
 import asyncio
 import os
 from dotenv import load_dotenv
-from app.bot.user_router import user_router
+from app.bot.handlers.user_router import user_router
 from aiogram import Bot, Dispatcher
 
 load_dotenv()
@@ -23,5 +23,6 @@ async def main():
 if __name__ == "__main__":
     try:
         asyncio.run(main())
+        print('Start')
     except KeyboardInterrupt:
         print('Exit')
