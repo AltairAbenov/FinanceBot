@@ -21,10 +21,6 @@ async def start_handler(message: Message):
                          "<b>Попробуй  👇</b>",
                          parse_mode="HTML")
     
-@user_router.message(Command("help"))
-async def help_cmd(message: Message):
-    await message.answer('Хелпа')
-    
 @user_router.message(F.text)
 async def ticker_handler(message: Message):
     try:
