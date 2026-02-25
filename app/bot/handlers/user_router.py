@@ -3,10 +3,10 @@ from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, BufferedInputFile
 from app.bot.parsing import parse_query
-from app.bot.services.market_data import fetch_history
-from app.bot.services.market_data import fetch_currency
-from app.bot.services.analytics import make_summary
-from app.bot.services.charts import build_price_chart
+from app.services.market_data import fetch_history
+from app.services.market_data import fetch_currency
+from app.services.analytics import make_summary
+from app.services.charts import build_price_chart
 
 user_router = Router()
 
