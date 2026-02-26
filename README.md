@@ -18,6 +18,12 @@ The bot retrieves real-time stock data, calculates key metrics, and generates pr
 
 ---
 
+## 📸 Example
+
+![Bot Example](images/example.png)
+
+---
+
 ## 🛠 Technologies Used
 
 - Python 3.11+
