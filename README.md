@@ -34,5 +34,5 @@ The bot retrieves real-time stock data, calculates key metrics, and generates pr
 1. Clone repository:
 
 ```bash
-git clone https://github.com/your-username/finance-analysis-helper.git
+git clone https://github.com/AltairAbenov/FinanceBot.git
 cd finance-analysis-helper
